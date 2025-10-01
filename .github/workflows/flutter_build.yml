@@ -2,43 +2,30 @@ name: Build Flutter APK
 
 on:
   push:
-    # El flujo de trabajo se ejecuta cada vez que subes (push) a la rama 'main'.
     branches:
       - main
 
 jobs:
   build:
-    # Usa un sistema operativo reciente
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: ⬇️ Checkout repo
-        # Obtiene el código de tu repositorio
-        uses: actions/checkout@v4 # Actualizado a la última versión
 
-      - name: ⚙️ Set up Flutter
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          # CORRECCIÓN: Usamos 'stable' para garantizar que siempre funcione con una versión válida.
-          # También puedes usar una versión específica como '3.22.2' si lo prefieres.
-          channel: 'stable'
-          
-      - name: 📦 Install dependencies
+          flutter-version: '3.35.1'
+
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: 🧪 Run tests (Optional, but recommended)
-        run: flutter test
-
-      - name: 🏗️ Build APK (release)
-        # Compila la versión final (release)
+      - name: Build APK (release)
         run: flutter build apk --release
 
-      - name: ⬆️ Upload APK artifact
-        # Sube el APK para que puedas descargarlo desde GitHub
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          # Ruta estándar donde Flutter coloca el APK de release
           path: build/app/outputs/flutter-apk/app-release.apk
-          # Recomendado: Controla el tiempo que el artefacto estará disponible (e.g., 5 días)
-          retention-days: 5
